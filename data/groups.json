@@ -1,0 +1,9 @@
+[
+    {
+        "id": 1,
+        "name": "Поход в горы",
+        "route": "Алтай",
+        "max_capacity": 10,
+        "current_members": 3
+    }
+]
