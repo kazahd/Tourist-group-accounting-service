@@ -16,27 +16,33 @@ def check_age(age: int) -> str:
 def add_participant(
     participants: list[dict], group_id: int, name: str, age: int
 ) -> dict:
-    """Добавить участника в группу.
-
-    TODO: сформировать словарь участника
-    и добавить его в список participants.
-    """
-    pass
+    """Добавить участника в список и вернуть его."""
+    participant_id = len(participants) + 1
+    participant = {
+        "id": participant_id,
+        "group_id": group_id,
+        "name": name,
+        "age": age,
+    }
+    participants.append(participant)
+    return participant
 
 
 def find_participant(participants: list[dict], name: str) -> list[dict]:
-    """Найти участников по имени.
+    """Найти участников по подстроке имени."""
+    result = []
+    for participant in participants:
+        if name.lower() in participant["name"].lower():
+            result.append(participant)
+    return result
 
-    TODO: перебрать список participants и отобрать участников,
-    в имени которых встречается подстрока name.
-    """
-    pass
 
-
-def filter_participants_by_age(participants: list[dict], min_age: int) -> list[dict]:
-    """Отобрать участников по возрасту.
-
-    TODO: перебрать список participants и вернуть участников
-    не младше min_age лет.
-    """
-    pass
+def filter_participants_by_age(
+    participants: list[dict], min_age: int
+) -> list[dict]:
+    """Отобрать участников не младше min_age."""
+    result = []
+    for participant in participants:
+        if participant["age"] >= min_age:
+            result.append(participant)
+    return result

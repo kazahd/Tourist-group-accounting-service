@@ -1,31 +1,36 @@
 """Модуль для работы с туристическими группами."""
 
 
-def add_group(groups: dict, group_name: str, route: str, max_capacity: int) -> None:
-    """Добавить группу в словарь groups.
-
-    TODO: сформировать идентификатор группы
-    и добавить её данные в словарь groups.
-    """
-    pass
-
-
-def find_group(groups: dict, query: str) -> dict:
-    """Найти группы по подстроке названия.
-
-    TODO: перебрать словарь groups и отобрать группы,
-    в названии которых встречается подстрока query.
-    """
-    pass
+def add_group(groups: list[dict], name: str, route: str,
+              max_capacity: int) -> dict:
+    """Добавить группу в список и вернуть её."""
+    group_id = len(groups) + 1
+    group = {
+        "id": group_id,
+        "name": name,
+        "route": route,
+        "max_capacity": max_capacity,
+    }
+    groups.append(group)
+    return group
 
 
-def check_group_capacity(groups: dict, group_id: int, min_capacity: int) -> bool:
-    """Проверить вместимость группы.
+def find_group(groups: list[dict], query: str) -> list[dict]:
+    """Найти группы по подстроке названия."""
+    result = []
+    for group in groups:
+        if query.lower() in group["name"].lower():
+            result.append(group)
+    return result
 
-    TODO: вернуть True, если вместимость группы
-    не меньше значения min_capacity.
-    """
-    pass
+
+def check_group_capacity(groups: list[dict], group_id: int,
+                         min_capacity: int) -> bool:
+    """Проверить, что вместимость группы не меньше min_capacity."""
+    for group in groups:
+        if group["id"] == group_id:
+            return group["max_capacity"] >= min_capacity
+    return False
 
 
 def get_group_status(current: int, max_capacity: int) -> str:

@@ -1,39 +1,41 @@
 """Модуль для сохранения и загрузки данных в JSON-файлах."""
-
 import json
+import os
 
 
 def load_groups(filename: str) -> list[dict]:
-    """Загрузить группы из JSON-файла.
-
-    TODO: открыть файл через контекстный менеджер with,
-    прочитать данные и вернуть список групп.
-    Обработать отсутствие файла и некорректный JSON.
-    """
-    pass
+    """Загрузить группы из JSON-файла. При отсутствии файла — пустой список."""
+    try:
+        with open(filename, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []
+    except json.JSONDecodeError:
+        print(f"Ошибка: файл {filename} повреждён.")
+        return []
 
 
 def save_groups(filename: str, groups: list[dict]) -> None:
-    """Сохранить группы в JSON-файл.
-
-    TODO: записать список групп в файл
-    с использованием контекстного менеджера with.
-    """
-    pass
+    """Сохранить группы в JSON-файл."""
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    with open(filename, "w", encoding="utf-8") as f:
+        json.dump(groups, f, ensure_ascii=False, indent=2)
 
 
 def load_participants(filename: str) -> list[dict]:
-    """Загрузить участников из JSON-файла.
-
-    TODO: аналогично load_groups() - прочитать
-    и вернуть список участников.
-    """
-    pass
+    """Загрузить участников из JSON-файла."""
+    try:
+        with open(filename, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []
+    except json.JSONDecodeError:
+        print(f"Ошибка: файл {filename} повреждён.")
+        return []
 
 
 def save_participants(filename: str, participants: list[dict]) -> None:
-    """Сохранить участников в JSON-файл.
-
-    TODO: записать список участников в файл.
-    """
-    pass
+    """Сохранить участников в JSON-файл."""
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    with open(filename, "w", encoding="utf-8") as f:
+        json.dump(participants, f, ensure_ascii=False, indent=2)
