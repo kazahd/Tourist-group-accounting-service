@@ -1,7 +1,7 @@
 # models/participants.py
 """Класс Participant и функции работы с участниками."""
 
-from typing import List
+from typing import List, Optional
 
 
 class Participant:
@@ -12,11 +12,13 @@ class Participant:
         participant_id: int,
         name: str,
         age: int,
+        group: Optional["object"] = None,  # объект Group или None
     ) -> None:
         """Создать объект участника."""
         self.id = participant_id
         self.name = name
         self.age = age
+        self.group = group   # ← связь с группой
 
     def is_adult(self) -> bool:
         """Проверить, является ли участник совершеннолетним."""
@@ -24,6 +26,11 @@ class Participant:
 
     def __str__(self) -> str:
         """Строковое представление участника."""
+        if self.group is not None:
+            return (
+                f"[{self.id}] {self.name}, {self.age} лет "
+                f"(группа: {self.group.name})"
+            )
         return f"[{self.id}] {self.name}, {self.age} лет"
 
 

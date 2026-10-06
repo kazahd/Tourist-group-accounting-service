@@ -26,8 +26,10 @@ class Group:
 
     def __str__(self) -> str:
         """Строковое представление группы."""
-        return f"[{self.id}] {self.name} — {self.route} " \
-               f"(вместимость: {self.max_capacity})"
+        return (
+            f"[{self.id}] {self.name} — {self.route} "
+            f"(вместимость: {self.max_capacity})"
+        )
 
 
 def add_group(
