@@ -1,0 +1,15 @@
+[flake8]
+exclude =
+    .git,
+    __pycache__,
+    venv,
+    env,
+    .venv,
+    migrations
+max-line-length = 79
+per-file-ignores =
+    */settings.py: E501, W291, E303
+    */admin.py: F401
+    */models.py: F401
+    */tests.py: F401
+    
