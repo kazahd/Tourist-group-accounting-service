@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Список групп{% endblock %}
+
+{% block content %}
+<h1>Туристические группы</h1>
+<p>Всего групп: {{ groups|length }}</p>
+
+{% for group in groups %}
+    {% include "tour_groups/includes/group_card.html" %}
+{% empty %}
+    <p>Группы не найдены.</p>
+{% endfor %}
+{% endblock %}

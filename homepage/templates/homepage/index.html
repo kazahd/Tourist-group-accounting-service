@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - Туристический сервис{% endblock %}
+
+{% block content %}
+<h1 class="display-4">Сервис учета туристических групп</h1>
+<p class="lead">Управление группами, участниками и поездками.</p>
+<hr class="my-4">
+<p>Выберите раздел для просмотра:</p>
+<a href="{% url 'tour_groups:list' %}" class="btn btn-primary me-2">Группы</a>
+<a href="{% url 'tour_trips:list' %}" class="btn btn-secondary">Поездки</a>
+{% endblock %}

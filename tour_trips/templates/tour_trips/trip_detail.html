@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if trip %}Поездка №{{ trip.id }}{% else %}Поездка не найдена{% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if trip %}
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">Поездка №{{ trip.id }}</h1>
+                <p class="card-text"><strong>Группа:</strong> {{ trip.group.name }}</p>
+                <p class="card-text"><strong>Маршрут:</strong> {{ trip.group.route }}</p>
+                <p class="card-text"><strong>Дата:</strong> {{ trip.trip_date }}</p>
+            </div>
+        </div>
+    {% else %}
+        <h1 class="text-danger">Поездка не найдена</h1>
+        <p>Поездка с указанным идентификатором отсутствует.</p>
+    {% endif %}
+    <a href="{% url 'tour_trips:list' %}" class="btn btn-outline-secondary mt-3">← К списку поездок</a>
+{% endblock %}

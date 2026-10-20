@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Список поездок{% endblock %}
+
+{% block content %}
+<h1>Поездки</h1>
+<p>Всего поездок: {{ trips|length }}</p>
+
+<ul class="list-group">
+{% for trip in trips %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+            <a href="{% url 'tour_trips:detail' trip.id %}" class="text-decoration-none">
+                <strong>{{ trip.group.name }}</strong>
+            </a> — {{ trip.trip_date }}
+        </div>
+        {% include "tour_trips/includes/trip_status.html" %}
+    </li>
+{% empty %}
+    <li class="list-group-item">Поездки не найдены.</li>
+{% endfor %}
+</ul>
+{% endblock %}

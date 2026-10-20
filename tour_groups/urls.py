@@ -1,7 +1,9 @@
 from django.urls import path
 from . import views
 
+app_name = "tour_groups"
+
 urlpatterns = [
-    path("", views.groups, name="groups"),
-    path("<int:group_id>/", views.group_detail, name="group_detail"),
+    path("", views.groups, name="list"),
+    path("<int:group_id>/", views.group_detail, name="detail"),
 ]
