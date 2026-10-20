@@ -7,9 +7,9 @@
 <p>Всего групп: {{ groups|length }}</p>
 <ul class="list-group mb-3">
 {% for group in groups %}
-    <li class="list-group-item">
-        <a href="{% url 'tour_groups:detail' group.id %}"><strong>{{ group.name }}</strong></a> (Маршрут: {{ group.route }})
-        — до {{ group.max_capacity }} чел.
+    <li class="list-group-item room-card mb-2">
+        <a href="{% url 'tour_groups:detail' group.id %}"><strong>{{ group.name }}</strong></a> 
+        (Маршрут: {{ group.route }}) — до {{ group.max_capacity }} чел.
     </li>
 {% empty %}
     <li class="list-group-item">Группы не найдены.</li>
