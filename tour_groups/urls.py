@@ -5,5 +5,5 @@ app_name = "tour_groups"
 
 urlpatterns = [
     path("", views.groups, name="list"),
-    path("<int:group_id>/", views.group_detail, name="detail"),
+    path("stats/", views.group_stats, name="stats"),
 ]

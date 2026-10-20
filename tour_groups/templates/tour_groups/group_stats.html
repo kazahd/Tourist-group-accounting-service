@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Статистика групп{% endblock %}
+
+{% block content %}
+<h1>Статистика групп</h1>
+<table class="table table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Группа</th>
+            <th>Количество участников</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in stats %}
+        <tr>
+            <td>{{ item.group_name }}</td>
+            <td>{{ item.participants_count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'tour_groups:list' %}" class="btn btn-secondary">Назад к группам</a>
+{% endblock %}

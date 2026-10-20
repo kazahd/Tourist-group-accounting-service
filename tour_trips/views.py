@@ -1,33 +1,39 @@
+import sqlite3
 from django.shortcuts import render
 
-from models.trips import find_trip_by_id
-from storage import load_groups, load_trips
+DB_PATH = "data/tourist.sqlite"
 
 
 def trips(request):
-    """Страница списка поездок."""
-    groups_list = load_groups("data/groups.json")
-    trips_list = load_trips("data/trips.json", groups_list)
+    """Страница списка поездок (Запрос 5)."""
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    trips_data = conn.execute("""
+        SELECT t.id, t.trip_date, g.name AS group_name
+        FROM trips t
+        JOIN groups g ON t.group_id = g.id
+        ORDER BY t.trip_date;
+    """).fetchall()
+    conn.close()
 
-    context = {
-        "trips": trips_list,
-    }
-    return render(request, "tour_trips/trip_list.html", context)
+    return render(request, "tour_trips/trip_list.html", {"trips": trips_data})
 
 
 def trip_detail(request, trip_id):
     """Страница конкретной поездки."""
-    groups_list = load_groups("data/groups.json")
-    trips_list = load_trips("data/trips.json", groups_list)
-    trip = find_trip_by_id(trips_list, trip_id)
-
-    context = {
-        "trip": trip,
-    }
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    trip = conn.execute("""
+        SELECT t.id, t.trip_date, g.name AS group_name, g.route
+        FROM trips t
+        JOIN groups g ON t.group_id = g.id
+        WHERE t.id = ?;
+    """, (trip_id,)).fetchone()
+    conn.close()
 
     return render(
         request,
         "tour_trips/trip_detail.html",
-        context,
-        status=404 if trip is None else 200,
+        {"trip": trip},
+        status=404 if trip is None else 200
     )

@@ -1,14 +1,21 @@
 {% extends "base.html" %}
 
-{% block title %}Список групп{% endblock %}
+{% block title %}Группы{% endblock %}
 
 {% block content %}
 <h1>Туристические группы</h1>
 <p>Всего групп: {{ groups|length }}</p>
-
+<ul class="list-group mb-3">
 {% for group in groups %}
-    {% include "tour_groups/includes/group_card.html" %}
+    <li class="list-group-item">
+        <strong>{{ group.name }}</strong> (Маршрут: {{ group.route }}) 
+        — до {{ group.max_capacity }} чел.
+    </li>
 {% empty %}
-    <p>Группы не найдены.</p>
+    <li class="list-group-item">Группы не найдены.</li>
 {% endfor %}
+</ul>
+<a href="{% url 'tour_groups:stats' %}" class="btn btn-info text-white">
+    Посмотреть статистику участников
+</a>
 {% endblock %}
