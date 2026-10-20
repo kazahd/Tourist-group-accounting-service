@@ -8,7 +8,7 @@
 <ul class="list-group mb-3">
 {% for group in groups %}
     <li class="list-group-item">
-        <strong>{{ group.name }}</strong> (Маршрут: {{ group.route }}) 
+        <a href="{% url 'tour_groups:detail' group.id %}"><strong>{{ group.name }}</strong></a> (Маршрут: {{ group.route }})
         — до {{ group.max_capacity }} чел.
     </li>
 {% empty %}

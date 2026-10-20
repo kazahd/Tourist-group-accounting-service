@@ -38,3 +38,22 @@ def group_stats(request):
         "tour_groups/group_stats.html",
         {"stats": stats},
     )
+
+def group_detail(request, group_id):
+    """Страница конкретной группы (Параметризованный запрос)."""
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    
+    # Параметризованный запрос для защиты от SQL-инъекций
+    group = conn.execute(
+        "SELECT id, name, route, max_capacity FROM groups WHERE id = ?;",
+        (group_id,)
+    ).fetchone()
+    conn.close()
+
+    return render(
+        request,
+        "tour_groups/group_detail.html",
+        {"group": group},
+        status=404 if group is None else 200
+    )
