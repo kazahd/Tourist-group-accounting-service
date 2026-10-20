@@ -107,3 +107,5 @@ tourist_service/
     ├── views.py           # trips(), trip_detail()
     └── urls.py
     
+Запустить консмоль sqlite:
+python -m sqlite3 data/tourist.sqlite
