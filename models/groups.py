@@ -26,8 +26,10 @@ class Group:
 
     def __str__(self) -> str:
         """Строковое представление группы."""
-        return f"[{self.id}] {self.name} — {self.route} " \
-               f"(вместимость: {self.max_capacity})"
+        return (
+            f"[{self.id}] {self.name} — {self.route} "
+            f"(вместимость: {self.max_capacity})"
+        )
 
 
 def add_group(
@@ -59,3 +61,11 @@ def show_groups(groups: List[Group]) -> None:
         return
     for group in groups:
         print(group)
+
+
+def find_group_by_id(groups: List[Group], group_id: int):
+    """Найти группу по идентификатору."""
+    for group in groups:
+        if group.id == group_id:
+            return group
+    return None

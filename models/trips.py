@@ -44,3 +44,11 @@ def show_trips(trips: List[Trip]) -> None:
         return
     for trip in trips:
         print(trip)
+
+
+def find_trip_by_id(trips: List[Trip], trip_id: int):
+    """Найти поездку по идентификатору."""
+    for trip in trips:
+        if trip.id == trip_id:
+            return trip
+    return None
