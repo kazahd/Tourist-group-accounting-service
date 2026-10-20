@@ -6,6 +6,10 @@ import os
 from typing import List
 
 from models import Group, Participant, Trip
+from models.relations import (
+    find_group_by_id,
+    restore_participant_relations,
+)
 
 
 def load_groups(filename: str) -> List[Group]:
@@ -45,27 +49,55 @@ def save_groups(filename: str, groups: List[Group]) -> None:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
-def load_participants(filename: str) -> List[Participant]:
+def load_participants(
+    filename: str, groups: List[Group]
+) -> List[Participant]:
     """Загрузить участников из JSON-файла."""
     try:
         with open(filename, "r", encoding="utf-8") as f:
             data = json.load(f)
-        return [
-            Participant(item["id"], item["name"], item["age"])
-            for item in data
-        ]
     except FileNotFoundError:
         return []
-    except (json.JSONDecodeError, KeyError):
+    except json.JSONDecodeError:
         print(f"Ошибка: файл {filename} повреждён.")
         return []
 
+    participants = [
+        Participant(
+            item["id"],
+            item["name"],
+            item["age"],
+            group=find_group_by_id(groups, item.get("group_id"))
+            if item.get("group_id") is not None
+            else None,
+        )
+        for item in data
+    ]
 
-def save_participants(filename: str, participants: List[Participant]) -> None:
+    # Восстановление связей через relations.py
+    participant_group_map = {
+        item["id"]: item["group_id"]
+        for item in data
+        if item.get("group_id") is not None
+    }
+    restore_participant_relations(
+        participants, groups, participant_group_map
+    )
+    return participants
+
+
+def save_participants(
+    filename: str, participants: List[Participant]
+) -> None:
     """Сохранить участников в JSON-файл."""
     os.makedirs(os.path.dirname(filename), exist_ok=True)
     data = [
-        {"id": p.id, "name": p.name, "age": p.age}
+        {
+            "id": p.id,
+            "name": p.name,
+            "age": p.age,
+            "group_id": p.group.id if p.group is not None else None,
+        }
         for p in participants
     ]
     with open(filename, "w", encoding="utf-8") as f:
@@ -87,9 +119,7 @@ def load_trips(
 
     trips: List[Trip] = []
     for item in data:
-        group = next(
-            (g for g in groups if g.id == item["group_id"]), None
-        )
+        group = find_group_by_id(groups, item["group_id"])
         if group is not None:
             trips.append(Trip(item["id"], group, item["trip_date"]))
     return trips

@@ -10,6 +10,7 @@ from models.participants import (
     filter_participants_by_age,
     show_participants,
 )
+from models.relations import link_participant_to_group
 from models.trips import add_trip, show_trips
 from storage import (
     load_groups,
@@ -29,19 +30,22 @@ TRIPS_FILE = "data/trips.json"
 def main() -> None:
     """Главное меню приложения."""
     groups: List[Group] = load_groups(GROUPS_FILE)
-    participants: List[Participant] = load_participants(PARTICIPANTS_FILE)
+    participants: List[Participant] = load_participants(
+        PARTICIPANTS_FILE, groups
+    )
     trips: List[Trip] = load_trips(TRIPS_FILE, groups)
 
     while True:
-        print("\n=== Сервис учета туристических групп ===")
+        print("\nСервис учета туристических групп")
         print("1. Показать группы")
         print("2. Добавить группу")
         print("3. Найти группу")
         print("4. Показать участников")
         print("5. Добавить участника")
         print("6. Фильтр участников по возрасту")
-        print("7. Показать поездки")
-        print("8. Добавить поездку")
+        print("7. Привязать участника к группе")
+        print("8. Показать поездки")
+        print("9. Добавить поездку")
         print("0. Выход")
         choice = input_str("Выберите действие: ")
 
@@ -71,11 +75,26 @@ def main() -> None:
                 filter_participants_by_age(participants, min_age)
             )
         elif choice == "7":
-            show_trips(trips)
-        elif choice == "8":
+            show_participants(participants)
+            pid = input_int("ID участника: ")
             show_groups(groups)
-            group_id = input_int("ID группы: ")
-            group = next((g for g in groups if g.id == group_id), None)
+            gid = input_int("ID группы: ")
+            participant = next(
+                (p for p in participants if p.id == pid), None
+            )
+            group = next((g for g in groups if g.id == gid), None)
+            if participant is None or group is None:
+                print("Участник или группа не найдены.")
+                continue
+            link_participant_to_group(participant, group)
+            save_participants(PARTICIPANTS_FILE, participants)
+            print("Участник привязан к группе.")
+        elif choice == "8":
+            show_trips(trips)
+        elif choice == "9":
+            show_groups(groups)
+            gid = input_int("ID группы: ")
+            group = next((g for g in groups if g.id == gid), None)
             if group is None:
                 print("Группа не найдена.")
                 continue
