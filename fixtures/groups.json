@@ -1,0 +1,29 @@
+[
+  {
+    "model": "tour_groups.group",
+    "pk": 1,
+    "fields": {
+      "name": "Поход в горы",
+      "route": "Алтай",
+      "max_capacity": 10
+    }
+  },
+  {
+    "model": "tour_groups.group",
+    "pk": 2,
+    "fields": {
+      "name": "Сплав по реке",
+      "route": "Карелия",
+      "max_capacity": 8
+    }
+  },
+  {
+    "model": "tour_groups.group",
+    "pk": 3,
+    "fields": {
+      "name": "Городской тур",
+      "route": "Москва",
+      "max_capacity": 15
+    }
+  }
+]

@@ -1,0 +1,34 @@
+[
+  {
+    "model": "tour_groups.trip",
+    "pk": 1,
+    "fields": {
+      "group_id": 1,
+      "trip_date": "2026-07-15"
+    }
+  },
+  {
+    "model": "tour_groups.trip",
+    "pk": 2,
+    "fields": {
+      "group_id": 1,
+      "trip_date": "2026-08-20"
+    }
+  },
+  {
+    "model": "tour_groups.trip",
+    "pk": 3,
+    "fields": {
+      "group_id": 2,
+      "trip_date": "2026-06-10"
+    }
+  },
+  {
+    "model": "tour_groups.trip",
+    "pk": 4,
+    "fields": {
+      "group_id": 3,
+      "trip_date": "2026-09-05"
+    }
+  }
+]
