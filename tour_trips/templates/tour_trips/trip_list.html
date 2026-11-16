@@ -6,29 +6,28 @@
 <h1>Расписание поездок</h1>
 
 <form method="get" class="row g-2 mb-3">
-    <div class="col-md-4">
-        <input type="text" name="group" value="{{ group_query }}"
-               class="form-control" placeholder="Фильтр по названию группы">
-    </div>
+    {{ filter_form.non_field_errors }}
+    {% for field in filter_form %}
     <div class="col-md-3">
-        <input type="date" name="from" value="{{ date_from }}" class="form-control">
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+        {{ field.errors }}
     </div>
+    {% endfor %}
     <div class="col-md-3">
-        <input type="date" name="to" value="{{ date_to }}" class="form-control">
-    </div>
-    <div class="col-md-2">
-        <button class="btn btn-primary w-100" type="submit">Фильтр</button>
-    </div>
-    <div class="col-md-3">
-        <select name="sort" class="form-select">
+        <label class="form-label" for="id_sort">Сортировка</label>
+        <select id="id_sort" name="sort" class="form-select">
             <option value="date" {% if sort_key == "date" %}selected{% endif %}>Дата ↑</option>
             <option value="date_desc" {% if sort_key == "date_desc" %}selected{% endif %}>Дата ↓</option>
             <option value="group" {% if sort_key == "group" %}selected{% endif %}>По группе</option>
         </select>
     </div>
+    <div class="col-md-3 align-self-end"><button class="btn btn-primary" type="submit">Фильтр</button></div>
 </form>
 
 <p>Всего поездок: {{ page_obj.paginator.count }}</p>
+<a href="{% url 'tour_trips:create' %}" class="btn btn-success mb-3">Добавить поездку</a>
 
 <ul class="list-group mt-3">
 {% for trip in trips %}
@@ -36,7 +35,7 @@
         <a href="{% url 'tour_trips:detail' trip.id %}">
             <strong>{{ trip.group.name }}</strong>
         </a>
-        — Дата: {{ trip.trip_date }}
+        — Дата: {{ trip.trip_date }} — {{ trip.get_status_display }}
     </li>
 {% empty %}
     <li class="list-group-item">Поездки не найдены.</li>
@@ -48,7 +47,7 @@
     <ul class="pagination">
         {% if page_obj.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&group={{ group_query }}&from={{ date_from }}&to={{ date_to }}&sort={{ sort_key }}">←</a>
+                <a class="page-link" href="?{{ filter_query }}&page={{ page_obj.previous_page_number }}">←</a>
             </li>
         {% endif %}
         <li class="page-item disabled">
@@ -56,7 +55,7 @@
         </li>
         {% if page_obj.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}&group={{ group_query }}&from={{ date_from }}&to={{ date_to }}&sort={{ sort_key }}">→</a>
+                <a class="page-link" href="?{{ filter_query }}&page={{ page_obj.next_page_number }}">→</a>
             </li>
         {% endif %}
     </ul>

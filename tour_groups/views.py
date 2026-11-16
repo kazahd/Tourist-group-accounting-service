@@ -1,8 +1,10 @@
 """Представления групп: ORM-версия (ПР9)."""
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.db.models import Avg, Count, Max, Min, Q
-from django.shortcuts import get_object_or_404, render
+from django.db.models import Avg, Count, F, Max, Min, Q
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 
+from .forms import GroupForm, ParticipantForm
 from .models import Group, Participant
 
 
@@ -33,6 +35,7 @@ def groups(request):
     qs = qs.annotate(
         participants_count=Count("participants", distinct=True),
         trips_count=Count("trips", distinct=True),
+        group_name=F("name"),
     )
 
     # ORM-7, ORM-8: поиск по нескольким полям
@@ -55,6 +58,8 @@ def groups(request):
 
     # ORM-15: пагинация
     page_obj = _page(Paginator(qs, 10), request.GET.get("page", 1))
+    filter_params = request.GET.copy()
+    filter_params.pop("page", None)
 
     return render(request, "tour_groups/group_list.html", {
         "groups": page_obj,
@@ -62,6 +67,7 @@ def groups(request):
         "query": query,
         "sort_key": sort_key,
         "min_capacity": min_capacity,
+        "filter_query": filter_params.urlencode(),
     })
 
 
@@ -73,10 +79,11 @@ def group_stats(request):
     )
 
     # ORM-6: exclude (убираем группы без участников)
-    qs = qs.exclude(participants_count=0)
+    qs = qs.exclude(participants_count=0).exclude(max_capacity__lt=1)
 
     # ORM-10: сортировка по аннотированному полю
     qs = qs.order_by("-participants_count", "name")
+    qs = qs.values("id", "name", "route", "participants_count")
 
     # ORM-13: aggregate по всей таблице участников
     summary = Participant.objects.aggregate(
@@ -85,16 +92,21 @@ def group_stats(request):
         min_age=Min("age"),
     )
 
+    empty_groups = Group.objects.filter(
+        participants__isnull=True
+    ).values_list("name", flat=True)
+
     return render(request, "tour_groups/group_stats.html", {
         "stats": qs,
         "summary": summary,
+        "empty_groups": empty_groups,
     })
 
 
-def group_detail(request, group_id):
+def group_detail(request, slug):
     """Карточка группы: get по pk + related_name + select_related."""
     # ORM-2: получение одного объекта (404 автоматически)
-    group = get_object_or_404(Group, pk=group_id)
+    group = get_object_or_404(Group, slug=slug)
 
     # ORM-11: обращение через related_name
     participants = group.participants.all()
@@ -107,3 +119,43 @@ def group_detail(request, group_id):
         "participants": participants,
         "trips": trips,
     })
+
+
+def group_create(request):
+    form = GroupForm(
+        request.POST if request.method == "POST" else None,
+        request.FILES if request.method == "POST" else None,
+    )
+    if request.method == "POST" and form.is_valid():
+        group = form.save()
+        return redirect(group.get_absolute_url())
+    return render(request, "tour_groups/group_form.html", {"form": form})
+
+
+def participant_add(request, slug):
+    group = get_object_or_404(Group, slug=slug)
+    form = ParticipantForm(
+        request.POST if request.method == "POST" else None,
+        group=group,
+    )
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        return redirect(group.get_absolute_url())
+    return render(request, "tour_groups/participant_form.html", {
+        "form": form,
+        "group": group,
+        "remaining_places": max(
+            group.max_capacity - group.participants.count(), 0
+        ),
+    })
+
+
+@require_POST
+def participant_remove(request, slug, participant_id):
+    """Удаляет участника только из его группы через POST-запрос."""
+    group = get_object_or_404(Group, slug=slug)
+    participant = get_object_or_404(
+        Participant, pk=participant_id, group=group
+    )
+    participant.delete()
+    return redirect(group.get_absolute_url())

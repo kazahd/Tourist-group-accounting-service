@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}{% if trip %}Изменить поездку{% else %}Новая поездка{% endif %}{% endblock %}
+
+{% block content %}
+<h1>{% if trip %}Изменить поездку{% else %}Добавить поездку{% endif %}</h1>
+<form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for field in form %}
+    <div class="mb-3">
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+        {{ field.errors }}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a href="{% url 'tour_trips:list' %}" class="btn btn-outline-secondary">Отмена</a>
+</form>
+{% endblock %}

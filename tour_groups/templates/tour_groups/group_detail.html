@@ -6,6 +6,11 @@
 <div class="card">
     <div class="card-body">
         <h1 class="card-title">{{ group.name }}</h1>
+        {% if group.image %}
+        <img src="{{ group.image.url }}" alt="Маршрут группы {{ group.name }}" class="img-fluid rounded mb-3" style="max-height: 360px;">
+        {% else %}
+        <p class="text-muted">Фотография маршрута не добавлена.</p>
+        {% endif %}
         <p class="card-text"><strong>ID:</strong> {{ group.id }}</p>
         <p class="card-text"><strong>Маршрут:</strong> {{ group.route }}</p>
         <p class="card-text"><strong>Вместимость:</strong> {{ group.max_capacity }} мест</p>
@@ -17,11 +22,20 @@
 </div>
 
 <h2 class="mt-4">Участники</h2>
+{% if group.has_free_places %}
+<a href="{% url 'tour_groups:participant_add' group.slug %}" class="btn btn-success mb-3">Записать участника</a>
+{% else %}
+<p class="text-muted">Свободных мест нет.</p>
+{% endif %}
 <ul class="list-group mb-3">
 {% for p in participants %}
     <li class="list-group-item">
         {{ p.name }}, {{ p.age }} лет
         {% if p.is_adult %}<span class="badge bg-success">18+</span>{% endif %}
+        <form method="post" action="{% url 'tour_groups:participant_remove' group.slug p.id %}" class="d-inline float-end">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline-danger">Удалить</button>
+        </form>
     </li>
 {% empty %}
     <li class="list-group-item">У группы пока нет участников.</li>

@@ -9,7 +9,17 @@
         <p class="card-text"><strong>Группа:</strong> {{ trip.group.name }}</p>
         <p class="card-text"><strong>Маршрут:</strong> {{ trip.group.route }}</p>
         <p class="card-text"><strong>Дата:</strong> {{ trip.trip_date }}</p>
+        <p class="card-text"><strong>Статус:</strong> {{ trip.get_status_display }}</p>
     </div>
+</div>
+<div class="d-flex gap-2 mt-3">
+    <a href="{% url 'tour_trips:update' trip.id %}" class="btn btn-outline-primary">Изменить поездку</a>
+    {% if can_cancel %}
+    <form method="post" action="{% url 'tour_trips:cancel' trip.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-danger">Отменить поездку</button>
+    </form>
+    {% endif %}
 </div>
 <a href="{% url 'tour_trips:list' %}" class="btn btn-outline-secondary mt-3">← К списку поездок</a>
 {% endblock %}

@@ -33,7 +33,8 @@
 <ul class="list-group mb-3">
 {% for group in groups %}
     <li class="list-group-item room-card mb-2">
-        <a href="{% url 'tour_groups:detail' group.id %}"><strong>{{ group.name }}</strong></a>
+        {% if group.image %}<img src="{{ group.image.url }}" alt="" class="img-thumbnail me-2" style="width: 72px; height: 56px; object-fit: cover;">{% endif %}
+        <a href="{{ group.get_absolute_url }}"><strong>{{ group.group_name }}</strong></a>
         (Маршрут: {{ group.route }}) — до {{ group.max_capacity }} чел.
         <span class="badge bg-secondary">участников: {{ group.participants_count }}</span>
         <span class="badge bg-info text-dark">поездок: {{ group.trips_count }}</span>
@@ -48,7 +49,7 @@
     <ul class="pagination">
         {% if page_obj.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ query }}&min_capacity={{ min_capacity }}&sort={{ sort_key }}">←</a>
+                <a class="page-link" href="?{% if filter_query %}{{ filter_query }}&{% endif %}page={{ page_obj.previous_page_number }}">←</a>
             </li>
         {% endif %}
         <li class="page-item disabled">
@@ -56,7 +57,7 @@
         </li>
         {% if page_obj.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ query }}&min_capacity={{ min_capacity }}&sort={{ sort_key }}">→</a>
+                <a class="page-link" href="?{% if filter_query %}{{ filter_query }}&{% endif %}page={{ page_obj.next_page_number }}">→</a>
             </li>
         {% endif %}
     </ul>
@@ -66,4 +67,5 @@
 <a href="{% url 'tour_groups:stats' %}" class="btn btn-info text-white">
     Посмотреть статистику участников
 </a>
+<a href="{% url 'tour_groups:create' %}" class="btn btn-success ms-2">Добавить группу</a>
 {% endblock %}
