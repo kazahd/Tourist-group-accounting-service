@@ -5,7 +5,8 @@
     "fields": {
       "name": "Поход в горы",
       "route": "Алтай",
-      "max_capacity": 10
+      "max_capacity": 10,
+      "slug": "поход-в-горы"
     }
   },
   {
@@ -14,7 +15,8 @@
     "fields": {
       "name": "Сплав по реке",
       "route": "Карелия",
-      "max_capacity": 8
+      "max_capacity": 8,
+      "slug": "сплав-по-реке"
     }
   },
   {
@@ -23,7 +25,8 @@
     "fields": {
       "name": "Городской тур",
       "route": "Москва",
-      "max_capacity": 15
+      "max_capacity": 15,
+      "slug": "городской-тур"
     }
   }
 ]
