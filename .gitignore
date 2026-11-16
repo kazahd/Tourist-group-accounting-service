@@ -21,3 +21,4 @@ __pycache__/
 *.pyo
 
 db.sqlite3
+data/tourist.sqlite
