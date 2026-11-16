@@ -239,6 +239,3 @@ python -m sqlite3 db.sqlite3
 ```bash
 python -m sqlite3 data/tourist.sqlite
 ```
-```
-
----
