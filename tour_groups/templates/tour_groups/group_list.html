@@ -4,17 +4,65 @@
 
 {% block content %}
 <h1>Туристические группы</h1>
-<p>Всего групп: {{ groups|length }}</p>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4">
+        <input type="text" name="q" value="{{ query }}"
+               class="form-control" placeholder="Поиск по названию или маршруту">
+    </div>
+    <div class="col-md-3">
+        <input type="number" name="min_capacity" value="{{ min_capacity }}"
+               class="form-control" placeholder="Мин. вместимость" min="0">
+    </div>
+    <div class="col-md-3">
+        <select name="sort" class="form-select">
+            <option value="name" {% if sort_key == "name" %}selected{% endif %}>Название (А→Я)</option>
+            <option value="name_desc" {% if sort_key == "name_desc" %}selected{% endif %}>Название (Я→А)</option>
+            <option value="capacity" {% if sort_key == "capacity" %}selected{% endif %}>Вместимость ↑</option>
+            <option value="capacity_desc" {% if sort_key == "capacity_desc" %}selected{% endif %}>Вместимость ↓</option>
+            <option value="participants" {% if sort_key == "participants" %}selected{% endif %}>По числу участников</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-primary w-100" type="submit">Применить</button>
+    </div>
+</form>
+
+<p>Всего групп: {{ page_obj.paginator.count }}</p>
+
 <ul class="list-group mb-3">
 {% for group in groups %}
     <li class="list-group-item room-card mb-2">
-        <a href="{% url 'tour_groups:detail' group.id %}"><strong>{{ group.name }}</strong></a> 
+        <a href="{% url 'tour_groups:detail' group.id %}"><strong>{{ group.name }}</strong></a>
         (Маршрут: {{ group.route }}) — до {{ group.max_capacity }} чел.
+        <span class="badge bg-secondary">участников: {{ group.participants_count }}</span>
+        <span class="badge bg-info text-dark">поездок: {{ group.trips_count }}</span>
     </li>
 {% empty %}
     <li class="list-group-item">Группы не найдены.</li>
 {% endfor %}
 </ul>
+
+{% if page_obj.paginator.num_pages > 1 %}
+<nav>
+    <ul class="pagination">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ query }}&min_capacity={{ min_capacity }}&sort={{ sort_key }}">←</a>
+            </li>
+        {% endif %}
+        <li class="page-item disabled">
+            <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+        </li>
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ query }}&min_capacity={{ min_capacity }}&sort={{ sort_key }}">→</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
 <a href="{% url 'tour_groups:stats' %}" class="btn btn-info text-white">
     Посмотреть статистику участников
 </a>

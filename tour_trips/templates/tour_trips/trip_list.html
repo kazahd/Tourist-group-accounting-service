@@ -4,13 +4,62 @@
 
 {% block content %}
 <h1>Расписание поездок</h1>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4">
+        <input type="text" name="group" value="{{ group_query }}"
+               class="form-control" placeholder="Фильтр по названию группы">
+    </div>
+    <div class="col-md-3">
+        <input type="date" name="from" value="{{ date_from }}" class="form-control">
+    </div>
+    <div class="col-md-3">
+        <input type="date" name="to" value="{{ date_to }}" class="form-control">
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-primary w-100" type="submit">Фильтр</button>
+    </div>
+    <div class="col-md-3">
+        <select name="sort" class="form-select">
+            <option value="date" {% if sort_key == "date" %}selected{% endif %}>Дата ↑</option>
+            <option value="date_desc" {% if sort_key == "date_desc" %}selected{% endif %}>Дата ↓</option>
+            <option value="group" {% if sort_key == "group" %}selected{% endif %}>По группе</option>
+        </select>
+    </div>
+</form>
+
+<p>Всего поездок: {{ page_obj.paginator.count }}</p>
+
 <ul class="list-group mt-3">
 {% for trip in trips %}
     <li class="list-group-item">
-        <strong>{{ trip.group_name }}</strong> — Дата: {{ trip.trip_date }}
+        <a href="{% url 'tour_trips:detail' trip.id %}">
+            <strong>{{ trip.group.name }}</strong>
+        </a>
+        — Дата: {{ trip.trip_date }}
     </li>
 {% empty %}
     <li class="list-group-item">Поездки не найдены.</li>
 {% endfor %}
 </ul>
+
+{% if page_obj.paginator.num_pages > 1 %}
+<nav>
+    <ul class="pagination">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&group={{ group_query }}&from={{ date_from }}&to={{ date_to }}&sort={{ sort_key }}">←</a>
+            </li>
+        {% endif %}
+        <li class="page-item disabled">
+            <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+        </li>
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}&group={{ group_query }}&from={{ date_from }}&to={{ date_to }}&sort={{ sort_key }}">→</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
 {% endblock %}

@@ -4,6 +4,14 @@
 
 {% block content %}
 <h1>Статистика групп</h1>
+
+{% if summary %}
+<p class="text-muted">
+    Средний возраст участников: {{ summary.avg_age|floatformat:1 }} лет
+    (мин: {{ summary.min_age }}, макс: {{ summary.max_age }})
+</p>
+{% endif %}
+
 <table class="table table-striped mt-3">
     <thead>
         <tr>
@@ -12,11 +20,13 @@
         </tr>
     </thead>
     <tbody>
-        {% for item in stats %}
+        {% for group in stats %}
         <tr>
-            <td>{{ item.group_name }}</td>
-            <td>{{ item.participants_count }}</td>
+            <td>{{ group.name }}</td>
+            <td>{{ group.participants_count }}</td>
         </tr>
+        {% empty %}
+        <tr><td colspan="2">Нет групп с участниками.</td></tr>
         {% endfor %}
     </tbody>
 </table>

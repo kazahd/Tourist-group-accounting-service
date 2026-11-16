@@ -1,22 +1,43 @@
 {% extends "base.html" %}
 
-{% block title %}
-    {% if group %}{{ group.name }} - Группа{% else %}Группа не найдена{% endif %}
-{% endblock %}
+{% block title %}{{ group.name }} — Группа{% endblock %}
 
 {% block content %}
-    {% if group %}
-        <div class="card">
-            <div class="card-body">
-                <h1 class="card-title">{{ group.name }}</h1>
-                <p class="card-text"><strong>ID:</strong> {{ group.id }}</p>
-                <p class="card-text"><strong>Маршрут:</strong> {{ group.route }}</p>
-                <p class="card-text"><strong>Вместимость:</strong> {{ group.max_capacity }} мест</p>
-            </div>
-        </div>
-    {% else %}
-        <h1 class="text-danger">Группа не найдена</h1>
-        <p>Группа с указанным идентификатором отсутствует.</p>
-    {% endif %}
-    <a href="{% url 'tour_groups:list' %}" class="btn btn-outline-secondary mt-3">← К списку групп</a>
+<div class="card">
+    <div class="card-body">
+        <h1 class="card-title">{{ group.name }}</h1>
+        <p class="card-text"><strong>ID:</strong> {{ group.id }}</p>
+        <p class="card-text"><strong>Маршрут:</strong> {{ group.route }}</p>
+        <p class="card-text"><strong>Вместимость:</strong> {{ group.max_capacity }} мест</p>
+        <p class="card-text">
+            <strong>Свободных мест:</strong>
+            {% if group.has_free_places %}есть{% else %}нет{% endif %}
+        </p>
+    </div>
+</div>
+
+<h2 class="mt-4">Участники</h2>
+<ul class="list-group mb-3">
+{% for p in participants %}
+    <li class="list-group-item">
+        {{ p.name }}, {{ p.age }} лет
+        {% if p.is_adult %}<span class="badge bg-success">18+</span>{% endif %}
+    </li>
+{% empty %}
+    <li class="list-group-item">У группы пока нет участников.</li>
+{% endfor %}
+</ul>
+
+<h2 class="mt-4">Поездки</h2>
+<ul class="list-group mb-3">
+{% for t in trips %}
+    <li class="list-group-item">
+        <a href="{% url 'tour_trips:detail' t.id %}">{{ t.trip_date }}</a>
+    </li>
+{% empty %}
+    <li class="list-group-item">Поездок пока нет.</li>
+{% endfor %}
+</ul>
+
+<a href="{% url 'tour_groups:list' %}" class="btn btn-outline-secondary mt-3">← К списку групп</a>
 {% endblock %}
