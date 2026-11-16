@@ -30,5 +30,13 @@
         {% endfor %}
     </tbody>
 </table>
+<h2 class="h5 mt-4">Группы без участников</h2>
+<ul>
+    {% for group_name in empty_groups %}
+    <li>{{ group_name }}</li>
+    {% empty %}
+    <li class="text-muted">Таких групп нет.</li>
+    {% endfor %}
+</ul>
 <a href="{% url 'tour_groups:list' %}" class="btn btn-secondary">Назад к группам</a>
 {% endblock %}
